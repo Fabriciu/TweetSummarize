@@ -1,13 +1,13 @@
 'use strict';
 
-let config = require('./config');
+var config = require('./config')
 
-let MongoClient = require('mongodb').MongoClient;
-let mongoUrl = "mongodb+srv://"+config.mongoUser+":"+config.mongoPass+"@"+config.mongoCluster;
+var MongoClient = require('mongodb').MongoClient
+var mongoUrl = config.mongoUrl
 
 MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
 	if(err) throw err;
-	var dbo = db.db("tweeterData")
+	var dbo = db.db("twitterData")
 	
 	dbo.collection("lastTweets").aggregate([
 	{
@@ -34,13 +34,14 @@ MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true 
 			'user_followers_count': '$_id.user_followers_count'
 		}
 	}]).toArray(function(err, results){
-		if(err) throw err
-			console.log(results)
+		if(err) throw err;
+		console.log(results)
 		dbo.collection("mostFollowedUsers").insertMany(results, function(err, result) {
-			if(err) throw err
+			if(err) throw err;
+			//db.close()
 		})
 
-	});
+	})
 
 	
 	dbo.collection("lastTweets").aggregate([
@@ -58,18 +59,18 @@ MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true 
 	{
 		'$project': {
 			'_id': 0,
-			'dayHour': '$_id',
+			'day_hour': '$_id',
 			'tweets': '$count'
 		}
 	}]).toArray(function(err, results){
-		if(err) throw err
-			console.log(results)
+		if(err) throw err;
+		console.log(results)
 		dbo.collection("tweetsPerHour").insertMany(results, function(err, result) {
-			if(err) throw err
-
+			if(err) throw err;
+			//db.close()
 		})
 
-	});
+	})
 	
 	dbo.collection("lastTweets").aggregate([
 	{
@@ -93,15 +94,13 @@ MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true 
 			'user_location': '$_id.location'
 		}
 	}]).toArray(function(err, results){
-		if(err) throw err
-			console.log(results)
-		dbo.collection("tweetsPerLangAndLocation").insertMany(results, function(err, result) {
-			if(err) throw err
-
+		if(err) throw err;
+		console.log(results)
+		dbo.collection("tweetsPerHashLangAndLocation").insertMany(results, function(err, result) {
+			if(err) throw err;
+			db.close()
 		})
-
-	});
-	db.close()
+	})
 })
 
 

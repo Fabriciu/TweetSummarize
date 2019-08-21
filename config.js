@@ -6,5 +6,6 @@ module.exports = {
 	count: "100",
 	mongoUser: "hashtagApp",
 	mongoPass: "ajS3Lr0u1FBHzvZD",
-	mongoCluster: "cluster0-q7xvl.mongodb.net/test?retryWrites=true&w=majority"
+	mongoCluster: "cluster0-q7xvl.mongodb.net/test?retryWrites=true&w=majority",
+	mongoUrl: "mongodb://mongo:27017"
 }
